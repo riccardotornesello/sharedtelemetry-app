@@ -2,4 +2,34 @@ import * as React from "react";
 import { createRoot } from "react-dom/client";
 
 const root = createRoot(document.body);
-root.render(<h2>Hello from React!</h2>);
+
+root.render(<App />);
+
+export function App() {
+  const height = 100;
+  const width = 300;
+  const stroke = 3;
+  const vals = [0, 0, 35, 25, 70, 100, 100, 100];
+
+  const pointHeight = height / 100;
+  const pointWidth = width / (vals.length - 1);
+
+  const points = vals.map(
+    (v, index) => `${index * pointWidth},${height + stroke - v * pointHeight}`
+  );
+
+  return (
+    <svg
+      height={height + 2 * stroke}
+      width={width}
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <polyline
+        fill="none"
+        stroke="#0074d9"
+        strokeWidth={stroke}
+        points={points.join(" ")}
+      />
+    </svg>
+  );
+}
