@@ -16,10 +16,10 @@ const createWindow = () => {
       nodeIntegration: true,
       contextIsolation: false,
     },
-    transparent: true, // Rende la finestra trasparente
-    frame: false, // Rimuove il frame della finestra
-    alwaysOnTop: true, // Mantiene la finestra sempre in primo piano
-    hasShadow: false, // Rimuove l'ombra della finestra
+    transparent: true,
+    frame: false,
+    alwaysOnTop: true,
+    hasShadow: false,
   });
 
   mainWindow.setIgnoreMouseEvents(true, { forward: true });
@@ -34,9 +34,7 @@ const createWindow = () => {
   }
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-  // mainWindow.setFocusable(false);
-  // mainWindow.setAlwaysOnTop(true);
+  // mainWindow.webContents.openDevTools();
 };
 
 // This method will be called when Electron has finished
