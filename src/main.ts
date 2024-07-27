@@ -22,7 +22,7 @@ const createWindow = () => {
     hasShadow: false,
   });
 
-  mainWindow.setIgnoreMouseEvents(true, { forward: true });
+  // mainWindow.setIgnoreMouseEvents(true, { forward: true });
 
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
