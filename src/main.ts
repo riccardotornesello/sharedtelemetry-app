@@ -22,6 +22,8 @@ const createWindow = () => {
     hasShadow: false,
   });
 
+  mainWindow.setAlwaysOnTop(true, "screen-saver", 1);
+
   // mainWindow.setIgnoreMouseEvents(true, { forward: true });
 
   // and load the index.html of the app.
