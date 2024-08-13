@@ -9,14 +9,14 @@ if (require("electron-squirrel-startup")) {
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 400,
-    height: 100,
+    width: 800,
+    height: 600,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: true,
       contextIsolation: false,
     },
-    transparent: true,
+    // transparent: true,
     frame: false,
     alwaysOnTop: true,
     hasShadow: false,
@@ -39,7 +39,7 @@ const createWindow = () => {
   }
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 };
 
 // This method will be called when Electron has finished
