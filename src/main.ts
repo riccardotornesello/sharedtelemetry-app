@@ -16,7 +16,7 @@ const createWindow = () => {
       nodeIntegration: true,
       contextIsolation: false,
     },
-    // transparent: true,
+    transparent: true,
     frame: false,
     alwaysOnTop: true,
     hasShadow: false,
