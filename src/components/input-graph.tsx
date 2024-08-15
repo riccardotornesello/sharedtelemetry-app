@@ -144,6 +144,18 @@ export function InputGraph({
       xmlns="http://www.w3.org/2000/svg"
       style={{ backgroundColor: "#00000066" }}
     >
+      {Array.from({ length: 5 }, (_, i) => (
+        <line
+          key={i}
+          x1="0"
+          y1={stroke + (i * (drawableHeight - stroke)) / 4}
+          x2={width}
+          y2={stroke + (i * (drawableHeight - stroke)) / 4}
+          stroke="#ffffff"
+          strokeWidth={1}
+        />
+      ))}
+
       {Object.entries(lines)
         .filter(([, { enabled }]) => enabled)
         .map(([key, { color, scaling, negative, dataKey, maxKey }]) => (
