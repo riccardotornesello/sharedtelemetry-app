@@ -4,45 +4,44 @@ import useWebSocket from "react-use-websocket";
 enum input {
   throttle = "throttle",
   brake = "brake",
-  steer = "steer",
+  steering = "steering",
   clutch = "clutch",
 }
 
 type InputLine = {
   color: string;
   dataKey: string;
-  centering: number;
+  maxKey?: string;
   scaling: number;
   enabled: boolean;
+  negative?: boolean;
 };
 
 const lines: Record<keyof typeof input, InputLine> = {
   throttle: {
     color: "#2ecc40",
     dataKey: "throttle",
-    centering: 1,
-    scaling: 1,
+    scaling: 100,
     enabled: true,
   },
   brake: {
     color: "#ff4136",
     dataKey: "brake",
-    centering: 1,
-    scaling: 1,
+    scaling: 100,
     enabled: true,
   },
-  steer: {
+  steering: {
     color: "#0074d9",
-    dataKey: "steer",
-    centering: 2,
-    scaling: 2,
+    dataKey: "steering",
+    maxKey: "steeringMax",
+    scaling: 100,
     enabled: true,
+    negative: true,
   },
   clutch: {
     color: "#ff851b",
     dataKey: "clutch",
-    centering: 1,
-    scaling: 1,
+    scaling: 100,
     enabled: false,
   },
 };
@@ -54,25 +53,49 @@ export type InputGraphProps = {
   speed: "slow" | "medium" | "fast";
 };
 
-function generatePoints(
-  vals: any[],
-  key: string,
-  height: number,
-  width: number,
-  stroke: number,
+export type GeneratePointsProps = {
+  vals: any[];
+  key: string;
+  height: number;
+  width: number;
+  stroke: number;
+  maxKey?: string;
+  scaling?: number;
+  negative?: boolean;
+};
+
+function generatePoints({
+  vals,
+  key,
+  height,
+  width,
+  stroke,
+  maxKey,
   scaling = 1,
-  centering = 1
-) {
+  negative = false,
+}: GeneratePointsProps) {
   const pointHeight = height / 100;
   const pointWidth = width / (vals.length - 1);
+  const centering = negative ? 2 : 1;
+
+  if (vals.length < 2) {
+    return "0,0";
+  }
 
   return vals
-    .map(
-      (v, index) =>
-        `${index * pointWidth},${
-          (height + stroke - (v[key] || 0) * pointHeight * scaling) / centering
-        }`
-    )
+    .map((v, index) => {
+      let max = maxKey ? v[maxKey] || 1 : 1;
+      if (max === 0) {
+        max = 1;
+      }
+
+      let value = v[key] || 0;
+      value = value / max;
+
+      return `${index * pointWidth},${
+        (height + stroke - value * pointHeight * scaling) / centering
+      }`;
+    })
     .join(" ");
 }
 
@@ -86,7 +109,9 @@ export function InputGraph({
   const valsCount =
     speed === "slow" ? 2 * width : speed === "medium" ? width : width / 2;
 
-  const [vals, setVals] = useState([]);
+  const [vals, setVals] = useState(
+    Array.from({ length: valsCount }, () => ({}))
+  );
 
   const { readyState, sendJsonMessage } = useWebSocket(
     "ws://localhost:8080/ws",
@@ -108,7 +133,7 @@ export function InputGraph({
 
   useEffect(() => {
     if (readyState === 1) {
-      sendJsonMessage({ subscribe: "inputTelemetry" });
+      sendJsonMessage({ subscribe: ["inputTelemetry"] });
     }
   }, [readyState]);
 
@@ -121,21 +146,22 @@ export function InputGraph({
     >
       {Object.entries(lines)
         .filter(([, { enabled }]) => enabled)
-        .map(([key, { color, scaling, centering }]) => (
+        .map(([key, { color, scaling, negative, dataKey, maxKey }]) => (
           <polyline
             key={key}
             fill="none"
             stroke={color}
             strokeWidth={stroke}
-            points={generatePoints(
+            points={generatePoints({
               vals,
-              key,
-              drawableHeight,
+              key: dataKey,
+              height: drawableHeight,
               width,
               stroke,
               scaling,
-              centering
-            )}
+              negative,
+              maxKey,
+            })}
           />
         ))}
     </svg>

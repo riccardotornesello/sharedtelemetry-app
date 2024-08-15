@@ -4,4 +4,4 @@ import { InputGraph } from "./components/input-graph";
 
 const root = createRoot(document.body);
 
-root.render(<InputGraph height={100} width={400} stroke={3} valsCount={400} />);
+root.render(<InputGraph height={100} width={400} stroke={3} speed="medium" />);
